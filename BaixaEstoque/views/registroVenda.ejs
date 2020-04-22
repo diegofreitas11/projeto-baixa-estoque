@@ -35,13 +35,14 @@
         
         <form action="/registroVenda" onsubmit="return validarCampos()" method="POST">
         <div class="form-group">
-            <select name="metodo" class="form-control" onchange="trocarMetodo()">
+            <select name="metodo" class="form-control" onchange="calcularValor()">
                 <option value="1">PEPS</option>
                 <option value="2">UEPS</option>
+                <option value="3">Média Ponderada</option>
             </select>
         </div>
         <div class="form-group">
-            <select name="produto" class="form-control" onchange="buscarValor()">
+            <select name="produto" class="form-control" onchange="calcularValor()">
                 <option value="">selecione o produto..</option>
             </select>
         </div>
@@ -79,73 +80,65 @@
         var inicioLoop = 0;
         var incremento = 1;
 
+        function calcularValor(){
+            var valorVenda = 0;
 
-        function buscarValor(){    
-            inputquantidade.disabled = false;  
+            if(cmbproduto.options[cmbproduto.selectedIndex].value === '' ||
+                cmbproduto.options[cmbproduto.selectedIndex].value === '')
+                return;
+
+            if(inputquantidade.disabled){
+                inputquantidade.setAttribute('value', 1);
+                inputquantidade.disabled = false;
+            }
+
             var idselecionado = cmbproduto.options[cmbproduto.selectedIndex].value;
 
             selecionado = produtos.filter((produto) => {
                 return produto.produto == idselecionado && produto.quantidade_disp != 0;
             });
 
-            if(cmbmetodo.options[cmbmetodo.selectedIndex].value == "1"){
-                var valorItemSelecionado = selecionado[0].valor_unit;
-                inicioLoop = 0;
-            }else{
-                var valorItemSelecionado = selecionado[selecionado.length - 1].valor_unit;
-                inicioLoop = selecionado.length - 1;
-            } 
-            
-            if(inputquantidade.value == ''){
-                inputquantidade.setAttribute('value', 1);
-                inputvalor.setAttribute('value', valorItemSelecionado);
-            }else{
-                calcularValor();
-            }
-            
             var soma = selecionado.reduce((prev, item) => prev+item.quantidade_disp, 0);
             inputquantidade.setAttribute('max', soma);
-            
-            valoresBaixa.push(1);
-        }
 
-        function trocarMetodo(){
-            ///aqui terá a lógica de quando for implementado o método de média ponderada.
-            inverterLoop();
-            calcularValor();
-        }
 
-        function inverterLoop(){
-            if(cmbmetodo.options[cmbmetodo.selectedIndex].value == "2"){
+            var quantidadeEscolhida = inputquantidade.value;
+            valoresBaixa = [];
+    
+            if(cmbmetodo.options[cmbmetodo.selectedIndex].value === "2"){
                 incremento = -1;
                 inicioLoop = selecionado.length - 1;
             }else{
                 incremento = 1;
                 inicioLoop = 0;
+                if(cmbmetodo.options[cmbmetodo.selectedIndex].value === "3"){
+                    var mediaponderada = selecionado.reduce((prev, item) => 
+                        prev + item.valor_unit * item.quantidade_disp, 0) /
+                        inputquantidade.max;
+
+                    valorVenda = quantidadeEscolhida * mediaponderada;
+                }
             }
-        }
 
-        function calcularValor(){
-            var quantidadeEscolhida = inputquantidade.value;
-            var valorVenda = 0;
             var cont = inicioLoop;
-
-            console.log(quantidadeEscolhida);
-            
-            valoresBaixa = [];
             while(quantidadeEscolhida > 0){
                 if(quantidadeEscolhida <= selecionado[cont].quantidade_disp){
                     valoresBaixa.push(quantidadeEscolhida);
-                    valorVenda += selecionado[cont].valor_unit * quantidadeEscolhida;
+                    if(cmbmetodo.options[cmbmetodo.selectedIndex].value != "3"){
+                        valorVenda += selecionado[cont].valor_unit * quantidadeEscolhida;
+                    }
                     quantidadeEscolhida = 0;
                 }else{
                     valoresBaixa.push(selecionado[cont].quantidade_disp);
-                    valorVenda += selecionado[cont].valor_unit * selecionado[cont].quantidade_disp;
+                    if(cmbmetodo.options[cmbmetodo.selectedIndex].value != "3"){
+                        valorVenda += selecionado[cont].valor_unit * selecionado[cont].quantidade_disp;
+                    }
                     quantidadeEscolhida -= selecionado[cont].quantidade_disp;  
                 }
                 cont += incremento;
             }
-            
+        
+
             inputvalor.setAttribute('value', valorVenda);
         }
 
@@ -179,7 +172,6 @@
         }
 
         function setValoresBaixa(){
-            inverterLoop();
             var itensBaixa = [];
             var cont = inicioLoop;
             
@@ -198,14 +190,14 @@
             var valido = true;
             var campos = Array.from(document.getElementsByTagName('input'));
                 for(let campo of campos){
-                    if(campo.value === ''){
+                    console.log(campo.value);
+                    if(campo.value === '' && campo.name != "produtos_baixa"){                  
                         campo.style.borderColor = 'red';
-                        valido = false;
+                        return false;
                     }
                 }
-
             setValoresBaixa();
-            return valido;
+            return true;
         }
 
     </script>
