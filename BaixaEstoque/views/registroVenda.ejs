@@ -1,0 +1,207 @@
+<!Doctype html>
+<html>
+    <head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" 
+            integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        
+    </head>
+    <body onload="carregarProdutos()">
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                <li class="nav-item dropdown">
+                    <a class="navbar-brand" href="#">Baixa de estoque</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Opções
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/novoproduto">Cadastrar Produto</a>
+                        <a class="dropdown-item" href="/">Registrar Compra</a>
+                    </div>
+                </li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="container mt-5">
+        <% if(locals.mensagem){ %>
+            <div class="alert alert-success" role="alert">
+                <%= mensagem %>
+              </div>
+        <% } %>
+        
+        <form action="/registroVenda" onsubmit="return validarCampos()" method="POST">
+        <div class="form-group">
+            <select name="metodo" class="form-control" onchange="calcularValor()">
+                <option value="1">PEPS</option>
+                <option value="2">UEPS</option>
+                <option value="3">Média Ponderada</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <select name="produto" class="form-control" onchange="calcularValor()">
+                <option value="">selecione o produto..</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <input type="number" class="form-control" placeholder="Escolha a quantidade"
+                name="quantidade" min="1" onchange="calcularValor()" disabled>
+        </div>
+        <div class="form-group">
+            <input type="number" class="form-control" 
+                readonly class="form-control-plaintext" name="valor_total" min="1" id="preco">
+        </div>
+        <input type="hidden" name="produtos_baixa">
+
+        <input type="submit" class="btn btn-primary btn-lg btn-block" value="Registrar">
+        
+            
+        </form>
+        </div>
+        
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" 
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" 
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" 
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script>
+        var produtos = <%- JSON.stringify(produtos) %>;
+        var selecionado = [];
+        var inputvalor = document.querySelector('input[name=valor_total]');
+        var inputquantidade = document.querySelector('input[name=quantidade]');
+        var cmbmetodo = document.querySelector('select[name=metodo]');
+        var cmbproduto = document.querySelector('select[name=produto]');
+        var valoresBaixa = []; //valores de cada estoque para dar baixa
+        var inicioLoop = 0;
+        var incremento = 1;
+
+        function calcularValor(){
+            var valorVenda = 0;
+
+            if(cmbproduto.options[cmbproduto.selectedIndex].value === '' ||
+                cmbproduto.options[cmbproduto.selectedIndex].value === '')
+                return;
+
+            if(inputquantidade.disabled){
+                inputquantidade.setAttribute('value', 1);
+                inputquantidade.disabled = false;
+            }
+
+            var idselecionado = cmbproduto.options[cmbproduto.selectedIndex].value;
+
+            selecionado = produtos.filter((produto) => {
+                return produto.produto == idselecionado && produto.quantidade_disp != 0;
+            });
+
+            var soma = selecionado.reduce((prev, item) => prev+item.quantidade_disp, 0);
+            inputquantidade.setAttribute('max', soma);
+
+
+            var quantidadeEscolhida = inputquantidade.value;
+            valoresBaixa = [];
+    
+            if(cmbmetodo.options[cmbmetodo.selectedIndex].value === "2"){
+                incremento = -1;
+                inicioLoop = selecionado.length - 1;
+            }else{
+                incremento = 1;
+                inicioLoop = 0;
+                if(cmbmetodo.options[cmbmetodo.selectedIndex].value === "3"){
+                    var mediaponderada = selecionado.reduce((prev, item) => 
+                        prev + item.valor_unit * item.quantidade_disp, 0) /
+                        inputquantidade.max;
+
+                    valorVenda = quantidadeEscolhida * mediaponderada;
+                }
+            }
+
+            var cont = inicioLoop;
+            while(quantidadeEscolhida > 0){
+                if(quantidadeEscolhida <= selecionado[cont].quantidade_disp){
+                    valoresBaixa.push(quantidadeEscolhida);
+                    if(cmbmetodo.options[cmbmetodo.selectedIndex].value != "3"){
+                        valorVenda += selecionado[cont].valor_unit * quantidadeEscolhida;
+                    }
+                    quantidadeEscolhida = 0;
+                }else{
+                    valoresBaixa.push(selecionado[cont].quantidade_disp);
+                    if(cmbmetodo.options[cmbmetodo.selectedIndex].value != "3"){
+                        valorVenda += selecionado[cont].valor_unit * selecionado[cont].quantidade_disp;
+                    }
+                    quantidadeEscolhida -= selecionado[cont].quantidade_disp;  
+                }
+                cont += incremento;
+            }
+        
+
+            inputvalor.setAttribute('value', valorVenda);
+        }
+
+        function carregarProdutos(){
+                      
+            var produtosJSON = <%- JSON.stringify(produtos) %>;
+           
+            var produtos = produtosJSON.map((produto) => {
+                return JSON.stringify([produto.produto, produto.nome]);
+            });
+
+
+            var produtosUnicosJSON = produtos.filter((produto, index) => {
+                return produtos.indexOf(produto) == index;
+            });
+
+            var produtosUnicos = produtosUnicosJSON.map((produto) => {
+                return JSON.parse(produto);
+            })
+
+
+            var select = document.querySelector('select[name=produto]');
+            console.log(produtosJSON);
+
+            produtosUnicos.forEach(produto => {
+                var option = document.createElement('option');
+                option.value = produto[0];
+                option.text = produto[1];
+                select.appendChild(option);
+            });
+        }
+
+        function setValoresBaixa(){
+            var itensBaixa = [];
+            var cont = inicioLoop;
+            
+            valoresBaixa.forEach(valor =>{
+                selecionado[cont].quantidade_disp -= valor;
+                itensBaixa.push(selecionado[cont]);
+                cont += incremento;
+            });
+            
+            document.querySelector('input[name=produtos_baixa]')
+            .setAttribute('value', JSON.stringify(itensBaixa));
+        }
+
+        function validarCampos(){
+        
+            var valido = true;
+            var campos = Array.from(document.getElementsByTagName('input'));
+                for(let campo of campos){
+                    console.log(campo.value);
+                    if(campo.value === '' && campo.name != "produtos_baixa"){                  
+                        campo.style.borderColor = 'red';
+                        return false;
+                    }
+                }
+            setValoresBaixa();
+            return true;
+        }
+
+    </script>
+
+    </body>
+
+</html>
