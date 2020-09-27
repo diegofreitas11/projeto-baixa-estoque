@@ -11,6 +11,9 @@ class Produto extends Model{
         tableName: 'produtos'
     })
   }
+  static associate(models){
+      this.hasMany(models.Transacao, {foreignKey: 'produto_id', as: 'transacoes'})
+  }
   
 }
 

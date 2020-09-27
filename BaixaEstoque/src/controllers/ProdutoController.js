@@ -1,12 +1,22 @@
 const Produto = require('../models/Produto');
-
-
+const Transacao = require('../models/Transacao');
 
 module.exports = {
     async index(req, res){
         const produtos = await Produto.findAll();
         console.log(produtos)
         return res.json(produtos);    
+    },
+
+    async indexWithTran(req, res){ //traz os produtos com as transações
+        const produtos = await Produto.findAll({
+            include: {
+                model: Transacao,
+                as: 'transacoes'
+            }
+        })
+
+        return res.json(produtos);
     },
 
     async show(req, res){
