@@ -7,10 +7,7 @@ const Root = createStackNavigator({
     Main
 },{
     defaultNavigationOptions: {
-        headerStyle:{
-            backgroundColor: '#DA552F'
-        },
-        headerTintColor: '#CECECE'
+        headerShown: false
     },
 });
 
