@@ -165,6 +165,7 @@ class NewProduct extends Component{
                         })
                     }}
                 />
+                
 
             </View>
         )

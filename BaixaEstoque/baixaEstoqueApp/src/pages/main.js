@@ -32,16 +32,23 @@ export default class Main extends Component{
                 data={this.state.produtos}
                 renderItem={({item}) => (
                     <View style={{
-                        borderWidth: 1,
+                        borderWidth: 0.5,
+                        borderColor: "#cecece",
                         borderRadius: 5,
-                        height: 100
+                        height: 100,
+                        margin: 5,
+                        shadowColor: '#cecece',
+                        elevation: 5,
+                        padding: 5
                     }}>
                         <Text style={{
                             fontWeight: "bold",
-                            fontSize: 22
+                            fontSize: 22,
+                            marginLeft: 5
                         }}>{item.nome}</Text>
                         <Text style={{
-                            color: '#999'
+                            color: '#999',
+                            marginLeft: 5
                         }}>{item.descricao}</Text>
                     </View>
                 )}
