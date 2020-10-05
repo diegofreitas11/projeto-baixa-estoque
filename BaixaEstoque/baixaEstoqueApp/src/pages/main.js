@@ -1,60 +1,44 @@
 import React, { Component } from 'react';
 import { View, Text, FlatList } from 'react-native';
-import api from '../services/api';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import Styles from './styles';
+
 
 export default class Main extends Component{
-
-    state = {
-        produtos: null
+    constructor(props){
+        super(props);
     }
-
-    componentDidMount(){
-        this.loadData();
-    }
-
-    loadData = async () => {
-        try{
-            var response = await api.get('produtos');
-            console.log(response.data);
-        }catch(error){
-            console.log(error)
-        }
-
-        this.setState({
-            produtos: response.data
-        })
-    }
-
     render(){
         return(
-        <View>
-            <FlatList
-                data={this.state.produtos}
-                renderItem={({item}) => (
-                    <View style={{
-                        borderWidth: 0.5,
-                        borderColor: "#cecece",
-                        borderRadius: 5,
-                        height: 100,
-                        margin: 5,
-                        shadowColor: '#cecece',
-                        elevation: 5,
-                        padding: 5
-                    }}>
-                        <Text style={{
-                            fontWeight: "bold",
-                            fontSize: 22,
-                            marginLeft: 5
-                        }}>{item.nome}</Text>
-                        <Text style={{
-                            color: '#999',
-                            marginLeft: 5
-                        }}>{item.descricao}</Text>
-                    </View>
-                )}
-                keyExtractor={item => item.id}
-            />
+        <View style={{
+            flex:1,
+            alignItems: 'center',
+            justifyContent: 'center'
+        }}>
+            <Text style={Styles.title}>Bem-vindo</Text>
+            <TouchableOpacity
+                style={{
+                    height: 50,
+                    width: 200,
+                    borderWidth: 0.5,
+                    borderRadius: 20,
+                    backgroundColor: '#cecece',
+                    borderColor: '#cecece',
+                    shadowColor: '#cecece',
+                    elevation: 4,
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}
+                onPress={() => this.props.navigation.navigate('Menu')}
+            >
+                <Text style={{
+                    color: 'white',
+                    fontFamily: 'roboto',
+                    fontWeight: 'bold',
+                    
+                }}>Começar</Text>
+            </TouchableOpacity>
         </View>
         )
-    }
+    }   
 }

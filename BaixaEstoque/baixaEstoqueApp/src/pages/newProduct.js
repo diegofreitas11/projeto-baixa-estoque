@@ -1,22 +1,26 @@
 import React, { Component, useRef } from 'react';
-import { View, Text, FlatList, TextInput, Button, Alert, Modal, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Alert, Modal, TouchableOpacity } from 'react-native';
 import api from '../services/api';
 import { Formik } from 'formik';
+import Styles from './styles';
+import SuccessModal from './succesModal'
 
 
 
-const Form = (props) =>{
+const Form = (props) => {
         const nome = useRef(null);
         const descricao = useRef(null);
+
         return(
            <Formik
                 initialValues={{
-                    nome: props.initialValues,
-                    descricao: props.initialValues
+                    nome: '',
+                    descricao: ''
                 }}
-                onSubmit={(values) =>{
+
+                onSubmit = {(values) => {
                     props.save(values);
-                    values.nome = "";
+                    values.nome = ""; 
                     values.descricao = "";
                 }}
            >
@@ -25,140 +29,64 @@ const Form = (props) =>{
                    <View style={{
                         padding: 20
                    }}>
-                        <Text style={{
-                            fontFamily: 'roboto',
-                            fontWeight: 'bold',
-                            fontSize: 22,
-                            marginBottom: 10
-                        }}>Novo Produto</Text>
-
-                        <Text style={{
-                            fontFamily: 'roboto',
-                            marginTop: 10
-                        }}>Insira o nome: </Text>
+                        <Text style={Styles.title}>Novo Produto</Text>
+                        <Text style={Styles.inputLabel}>Insira o nome: </Text>
                         <TextInput
                             ref={nome}
                             value={values.nome}
                             onChangeText={handleChange('nome')}
-                            style={{
-                                borderBottomWidth: 1
-                            }}
+                            style={Styles.input}
                         />
 
-                        <Text style={{
-                            fontFamily: 'roboto',
-                            marginTop: 10
-                        }}>Descrição: </Text>
+                        <Text style={Styles.inputLabel}>Descrição: </Text>
                         <TextInput
                             ref={descricao}
                             value={values.descricao}
                             onChangeText={handleChange('descricao')}
-                            style={{
-                                borderBottomWidth: 1
-                            }}
+                            style={Styles.input}
                         />
-                        <View style={{alignItems: 'center'}}>
+                        
                         <TouchableOpacity 
                             onPress={handleSubmit}
-                            style={{
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                padding: 5,
-                                marginTop: 20,
-                                width: 200,
-                                alignItems: 'center'
-                            }}
+                            style={Styles.button}
                         >
                             <Text>Enviar</Text>
                         </TouchableOpacity>
-                        </View>
+                        
                    </View>
                )}
            </Formik>
         )   
 }
 
-const SuccessModal = (props) => {
-    return(
-        <View 
-            style={{
-                justifyContent: 'center',
-                alignItems: 'center'
-        }}>
-            <Modal
-                visible={props.visible}
-                transparent={true}
-                animationType='fade'
-                onRequestClose={() => {
-                    Alert.alert("Modal has been closed.");
-                }}
-            >
-                <View style={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    flex: 1
-                }}>
-                <View style={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    
-                    height: 150,
-                    width: 250,
-                    borderColor: '#00FA9A',
-                    borderWidth: 2,
-                    backgroundColor: 'white',
-                    borderRadius: 20,
-                    shadowColor: '#000',
-                    elevation: 5,
-                    padding: 5,
-                    
-                }}>
-                    <Text style={{
-                        fontFamily: 'roboto',
-                        fontWeight: 'bold'
-                    }}>Produto inserido com sucesso!</Text>
-                    <TouchableOpacity 
-                        onPress={props.closeModal}
-                        style={{
-                            marginTop: 5,
-
-                        }}
-                    >
-                        <Text> OK</Text>
-                    </TouchableOpacity>
-                </View>
-                </View>
-            </Modal>
-        </View>
-    )
-}
 
 class NewProduct extends Component{
+    
     state = {
         isModalVisible: false,
     }
 
-
     save = async (produto) => {
         try{
-            await api.post('/novo_produto', produto);
+            await api.post('novo_produto', produto);
             this.setState({
                 isModalVisible: true
             })
         }catch(error){
-            console.log(error);
+            console.log(error)
         }
     }
+
 
     render(){
         return(
             <View>
-                <Form
+                <Form 
                     save={(produto) => this.save(produto)}
-                    
                 />
                 <SuccessModal 
                     visible={this.state.isModalVisible}
+                    message='Produto inserido'
                     closeModal={() => {
                         this.setState({
                             isModalVisible: false
@@ -166,7 +94,6 @@ class NewProduct extends Component{
                     }}
                 />
                 
-
             </View>
         )
     }

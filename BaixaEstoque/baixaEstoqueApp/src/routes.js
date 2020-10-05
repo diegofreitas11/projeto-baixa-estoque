@@ -1,38 +1,34 @@
-/*import { createStackNavigator } from 'react-navigation-stack';
-import { createSwitchNavigator} from 'react-navigation';*/
 
-import React, { Component } from 'react';
-import { Text } from 'react-native';
-
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+
 import Main from './pages/main';
+import List from './pages/list';
+import Menu from './pages/menu';
 import NewProduct from './pages/newProduct';
+import { createStackNavigator } from '@react-navigation/stack';
+import NewPurchase from './pages/newPurchase';
 
-const Drawer = createDrawerNavigator();
 
-const Root = ()  => 
-    (
+const Stack = createStackNavigator();
+
+
+const Root = () => {
+    return(
         <NavigationContainer>
-            <Drawer.Navigator initialRouteName="Main">
-                <Drawer.Screen 
-                    name="main" 
+            <Stack.Navigator initialRouteName="Main" headerMode="none">
+                <Stack.Screen 
+                    name="Main"
                     component={Main}
-                    options={{
-                        drawerLabel: (() => <Text> Lista de produtos</Text>)
-                    }}
                 />
-
-                <Drawer.Screen 
-                    name="newProduct" 
-                    component={NewProduct}
-                    options={{
-                        drawerLabel: (() => <Text> Novo Produto</Text>)
-                    }}
+                <Stack.Screen 
+                    name="Menu"
+                    component={Menu}
                 />
-            </Drawer.Navigator>
+            </Stack.Navigator>
         </NavigationContainer>
     )
+}
 
 
 export default Root;
