@@ -8,9 +8,7 @@ import SuccessModal from './succesModal';
 
 
 const Form = (props) => {
-    const valor = useRef(null);
-    const quantidade = useRef(null);
-
+    
     const calculateValue = (quantity) => {
         var transactions = props.product.transacoes;
         var acc = 0, i = 0;
