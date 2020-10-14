@@ -7,6 +7,7 @@ class Transacao extends Model{
             tipo: DataTypes.STRING,
             valor: DataTypes.FLOAT,
             quantidade: DataTypes.INTEGER,
+            metodo: DataTypes.INTEGER
         },{
             sequelize,
             tableName: 'transacoes'

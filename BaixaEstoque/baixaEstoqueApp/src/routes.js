@@ -5,9 +5,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import Main from './pages/main';
 import List from './pages/list';
 import Menu from './pages/menu';
-import NewProduct from './pages/newProduct';
 import { createStackNavigator } from '@react-navigation/stack';
-import NewPurchase from './pages/newPurchase';
+
 
 
 const Stack = createStackNavigator();
@@ -20,6 +19,7 @@ const Root = () => {
                 <Stack.Screen 
                     name="Main"
                     component={Main}
+    
                 />
                 <Stack.Screen 
                     name="Menu"

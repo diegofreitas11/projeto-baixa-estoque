@@ -12,7 +12,8 @@ module.exports = {
         const produtos = await Produto.findAll({
             include: {
                 model: Transacao,
-                as: 'transacoes'
+                as: 'transacoes',
+                required: true
             }
         })
 
@@ -21,6 +22,17 @@ module.exports = {
 
     async show(req, res){
         const produto = await Produto.findByPk(req.params.id)
+        return res.json(produto);
+    },
+
+    async showWithTran(req, res){
+        const produto = await Produto.findByPk(req.params.id,{
+            include: {
+                model: Transacao,
+                as: 'transacoes',
+                required: true
+            }
+        })
         return res.json(produto);
     },
 
