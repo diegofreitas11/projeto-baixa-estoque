@@ -1,4 +1,4 @@
-import React, { Component, useRef } from 'react';
+import React, { Component } from 'react';
 import { View, Text, FlatList, TextInput, TouchableOpacity, Alert } from 'react-native';
 import api from '../services/api';
 import Styles from './styles';
@@ -11,13 +11,15 @@ const Form = (props) => {
     
     const calculateValue = (quantity) => {
         var transactions = props.product.transacoes;
-        var acc = 0, i = 0;
-
+        var acc = 0 
+        var i = props.method === 'PEPS' ? 0 : transactions.length - 1;
+        var increment = props.method === 'PEPS' ? 1 : -1;
+        console.log(i);
         while(quantity>0){
             if(quantity > transactions[i].quantidade){
                 acc += transactions[i].valor * transactions[i].quantidade;
                 quantity -= transactions[i].quantidade;
-                i++;
+                i += increment;
             }else{
                 acc += transactions[i].valor * quantity;
                 quantity = 0;
@@ -99,8 +101,9 @@ class NewTransaction extends Component{
     state = {
         product: this.props.route.params.product,
         isModalVisible: false,
-        isSale: this.props.route.params.sale,
-        max: null
+        isSale: this.props.route.params.isSale,
+        max: null,
+        method: this.props.route.params.iSale ? this.props.route.params.method : null
     }
 
     componentDidMount(){
@@ -151,7 +154,7 @@ class NewTransaction extends Component{
         let isSale = this.state.isSale;
         let product;
         const transaction = {'produto_id': this.state.product.id, 
-        'tipo': isSale ? 'venda':'compra', 'metodo': isSale? 'PEPS': 'NULL',...values}
+        'tipo': isSale ? 'venda':'compra', 'metodo': this.state.method,...values}
         await api.post('nova_transacao', transaction)
 
         ///para atualizar a quantidade assim que cadastrar a transação
@@ -172,22 +175,23 @@ class NewTransaction extends Component{
     render(){
         return(
             <View>
-            <Form 
-                product={this.state.product}
-                save={(values) => this.save(values)}
-                isSale={this.state.isSale}
-                max={this.state.max}
-            />
+                <Form 
+                    product={this.state.product}
+                    save={(values) => this.save(values)}
+                    isSale={this.state.isSale}
+                    max={this.state.max}
+                    method={this.state.method}
+                />
 
-            <SuccessModal
-                visible={this.state.isModalVisible}
-                message='Transação inserida'
-                closeModal={() => {
-                    this.setState({
-                        isModalVisible: false
-                    })
-                }} 
-            />
+                <SuccessModal
+                    visible={this.state.isModalVisible}
+                    message='Transação inserida'
+                    closeModal={() => {
+                        this.setState({
+                            isModalVisible: false
+                        })
+                    }} 
+                />
            </View>
         )
     }

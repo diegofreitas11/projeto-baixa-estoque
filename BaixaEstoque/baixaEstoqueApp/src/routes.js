@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DrawerActions } from '@react-navigation/native';
 
 import Main from './pages/main';
 import List from './pages/list';
@@ -15,7 +15,11 @@ const Stack = createStackNavigator();
 const Root = () => {
     return(
         <NavigationContainer>
-            <Stack.Navigator initialRouteName="Main" headerMode="none">
+            <Stack.Navigator 
+                initialRouteName="Main" 
+                headerMode="none"
+               
+            >
                 <Stack.Screen 
                     name="Main"
                     component={Main}

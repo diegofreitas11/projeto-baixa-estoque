@@ -4,8 +4,7 @@ import { View, Modal, Text, TouchableOpacity } from 'react-native';
 import Styles from './styles';
 
 
-const SuccessModal = (props) => {
-    return(
+const SuccessModal = (props) => (
         <View 
             style={{
                 justifyContent: 'center',
@@ -33,6 +32,5 @@ const SuccessModal = (props) => {
             </Modal>
         </View>
     )
-}
 
 export default SuccessModal;

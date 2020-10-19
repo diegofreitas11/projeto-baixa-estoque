@@ -79,5 +79,10 @@ export default Styles = StyleSheet.create({
         shadowColor: '#000',
         elevation: 5,
         padding: 5,
+    },
+    methodText: {
+        alignSelf: 'center',
+        fontWeight: 'bold',
+        fontSize: 20
     }
 })

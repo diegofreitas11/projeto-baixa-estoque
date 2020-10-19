@@ -3,6 +3,7 @@ import { View, Text, FlatList, Modal, Alert, TouchableOpacity } from 'react-nati
 //import CheckBox from '@react-native-community/checkbox';
 import api from '../services/api';
 import Styles from './styles';
+import AdvanceModal from './advanceModal';
 
 
 
@@ -10,9 +11,8 @@ class Item extends Component{
     state = {
         item: this.props.item
     }
-    render(){
-        
 
+    render(){        
         return(
             <TouchableOpacity 
                 style={this.props.selected ? Styles.selectedListItem : Styles.listItem} 
@@ -62,6 +62,7 @@ export default class List extends Component{
             isStockList: url != 'produtos'
         })
 
+        console.log(this.state.isStockList)
         
     }
     
@@ -71,6 +72,26 @@ export default class List extends Component{
             isProductSelected: true, //controla se o modal com a opção de avançar aparece
             selected: item
         });
+    }
+
+    advance = () => {
+        this.setState({
+            isProductSelected: false,
+            selected: null
+        })
+
+        var nextPage = this.state.isStockList ? 'MethodPick' : 'NewTransaction';
+
+        this.props.navigation.navigate(nextPage, 
+            {product: this.state.selected, 
+            isSale: this.state.isStockList} )
+    }
+
+    cancel = () => {
+        this.setState({
+            isProductSelected: false,
+            selected: null
+        })
     }
 
     render(){
@@ -91,51 +112,13 @@ export default class List extends Component{
                 keyExtractor={item => item.id.toString()}
             />
 
-            <Modal
+            <AdvanceModal
                 visible={this.state.isProductSelected}
-                transparent={true}
-                animationType='slide'
-                onRequestClose={() => {
-                    Alert.alert("");
-                }}
-            >
-                <View style={Styles.container}>
-                    <View style={Styles.nextBox}>
-                        
-                        <Text>{this.state.selected ? 
-                        `Registrar transação de ${this.state.selected.nome}?` : '' }</Text>
-                        <View style={{flexDirection: 'row'}}>
-                            <TouchableOpacity 
-                                style={Styles.buttonInRow}
-                                onPress={() => {
-                                    this.setState({
-                                        isProductSelected: false,
-                                        selected: null
-                                    })
-                                    this.props.navigation.navigate('NewTransaction',
-                                    {product: this.state.selected, 
-                                    sale: this.state.isStockList})
-
-                                }}
-                            >
-                                <Text>Avançar</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity 
-                                style={Styles.buttonInRow}
-                                onPress={() => {
-                                    this.setState({
-                                        isProductSelected: false,
-                                        selected: null
-                                    })
-                                }}
-                            >
-                                <Text>Cancelar</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </View>
-            </Modal>
+                message={`Realizar transação de ${this.state.selected ? this.state.selected.nome : ''}?`}
+                advance={() => this.advance}
+                cancel={() => this.cancel}
+                
+            />
         </View>
 
         
