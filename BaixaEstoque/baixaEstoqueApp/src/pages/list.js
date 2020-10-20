@@ -97,7 +97,7 @@ export default class List extends Component{
     render(){
 
         return(
-        <View>
+        <View style={{backgroundColor: 'white'}}>
             <Text style={Styles.title}>Escolha o produto e segure</Text>
             <FlatList
                 data={this.state.products}

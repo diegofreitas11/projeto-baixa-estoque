@@ -25,8 +25,24 @@ const Form = (props) => {
                 quantity = 0;
             }
         }
-        
+
+
         return acc.toString();
+    }
+
+    const calculateAvg = (quantity) => {
+        var transactions = props.product.transacoes;
+        var total = transactions.reduce((acc, curr) => {
+            return acc + curr.quantidade * curr.valor;
+        }, 0);
+
+        var weightSum = transactions.reduce((acc, curr) => { 
+           return acc + curr.quantidade
+        }, 0);
+
+        var weightedAvg = (total / weightSum) * quantity;
+
+        return weightedAvg.toFixed(2).toString();
     }
 
     
@@ -49,15 +65,15 @@ const Form = (props) => {
                     <Text style={Styles.title}>{props.product.nome} </Text>
 
                     <Text style={Styles.inputLabel}>Quantidade</Text>
-                    <TextInput
-                        
+                    <TextInput    
                         value={values.quantidade}
                         keyboardType='numeric'
                         onChangeText={(text) => {
                             if(props.isSale){
                                 if(props.max>=text){
                                     handleChange('quantidade')(text)
-                                    let value = calculateValue(text);
+                                    let value = props.method === 'Média Ponderada' ?
+                                    calculateAvg(text) : calculateValue(text);
                                     if(props.isSale) handleChange('valor')(value);
                                 }else{
                                     handleChange('quantidade')('');
@@ -103,7 +119,7 @@ class NewTransaction extends Component{
         isModalVisible: false,
         isSale: this.props.route.params.isSale,
         max: null,
-        method: this.props.route.params.iSale ? this.props.route.params.method : null
+        method: this.props.route.params.isSale ? this.props.route.params.method : null
     }
 
     componentDidMount(){
@@ -144,7 +160,7 @@ class NewTransaction extends Component{
         })
 
         product.transacoes = product.transacoes.filter((item) => item.tipo === "compra");
-        console.log(product);
+        console.log(this.state.method);
 
         return product;
         
@@ -155,7 +171,13 @@ class NewTransaction extends Component{
         let product;
         const transaction = {'produto_id': this.state.product.id, 
         'tipo': isSale ? 'venda':'compra', 'metodo': this.state.method,...values}
-        await api.post('nova_transacao', transaction)
+
+        console.log(transaction.valor);
+        try{
+            await api.post('nova_transacao', transaction)
+        }catch(error){
+            console.log(error);
+        }
 
         ///para atualizar a quantidade assim que cadastrar a transação
         if(isSale){
@@ -174,7 +196,7 @@ class NewTransaction extends Component{
 
     render(){
         return(
-            <View>
+            <View style={{backgroundColor: 'white', flex: 1}}>
                 <Form 
                     product={this.state.product}
                     save={(values) => this.save(values)}

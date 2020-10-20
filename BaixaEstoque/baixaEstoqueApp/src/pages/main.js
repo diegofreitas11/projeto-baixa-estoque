@@ -10,11 +10,7 @@ export default class Main extends Component{
     }
     render(){
         return(
-        <View style={{
-            flex:1,
-            alignItems: 'center',
-            justifyContent: 'center'
-        }}>
+        <View style={Styles.container}>
             <Text style={Styles.title}>Bem-vindo</Text>
             <TouchableOpacity
                 style={{

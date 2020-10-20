@@ -7,66 +7,85 @@ import NewProduct from './newProduct';
 import NewTransaction from './newTransaction';
 import MethodPick from './methodPick';
 import { TouchableOpacity, Text } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 
 const Drawer = createDrawerNavigator();
+const Stack = createStackNavigator();
 
-const Stack1 = createStackNavigator();
-const Stack2 = createStackNavigator();
+const navOptions = ({navigation}) => ({
+    title: '',
+    headerStyle: {backgroundColor: 'white', elevation: 0},
+    headerLeft: () => (
+        <TouchableOpacity 
+            onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+            style={{padding: 5}}
+        >
+            <Icon name='bars' size={30} color='#000'/>
+        </TouchableOpacity>
+    )
+})
 
+
+const NewProductStack = () => {
+    return(
+        <Stack.Navigator 
+            initialRouteName="ProductList" 
+            headerMode="screen"
+            screenOptions={navOptions}
+        >
+            <Stack.Screen 
+                name="NewProduct" 
+                component={NewProduct}  
+            />
+            
+        </Stack.Navigator>
+    )
+}
 
 const NewPurchaseStack = () => {
     return(
-        <Stack1.Navigator 
+        <Stack.Navigator 
             initialRouteName="ProductList" 
             headerMode="screen"
-            screenOptions={({navigation}) => ({
-                title: '',
-                headerStyle: {backgroundColor: 'white'},
-                headerLeft: () => (
-                    <TouchableOpacity 
-                        onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
-                        style={{borderWidth: .5, width: 50, height: 50}} ///inserir um icone aqui
-                    >
-                        
-                    </TouchableOpacity>
-                )
-            })}
+            screenOptions={navOptions}
         >
-            <Stack1.Screen 
+            <Stack.Screen 
                 name="ProductList"
                 component={List}
                 
             />
-            <Stack1.Screen 
+            <Stack.Screen 
                 name="NewTransaction"
                 component={NewTransaction}
             />
-        </Stack1.Navigator>
+        </Stack.Navigator>
     )
 }
 
 const NewSaleStack = () => {
     return(
-        <Stack2.Navigator 
+        <Stack.Navigator 
             initialRouteName="StocktList" 
-            headerMode="none">
+            headerMode="screen"
+            screenOptions={navOptions}
+        >
 
-            <Stack2.Screen 
+            <Stack.Screen 
                 name="StockList"
                 component={List}
                 
             />
-            <Stack2.Screen 
+            <Stack.Screen 
                 name="MethodPick"
                 component={MethodPick}
                 
             />
-            <Stack2.Screen 
+            <Stack.Screen 
                 name="NewTransaction"
                 component={NewTransaction}
             />
-        </Stack2.Navigator>
+        </Stack.Navigator>
     )
 }
 
@@ -76,8 +95,8 @@ const Menu = () => {
             initialRouteName="NewProduct"
         >
             <Drawer.Screen 
-                name="NewProduct" 
-                component={NewProduct}
+                name="NewProductStack" 
+                component={NewProductStack}
                 options={{
                     drawerLabel: (() => <Text> Novo Produto</Text>),
                 }}

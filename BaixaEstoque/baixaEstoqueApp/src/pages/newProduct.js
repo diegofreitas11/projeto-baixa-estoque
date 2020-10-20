@@ -80,7 +80,7 @@ class NewProduct extends Component{
 
     render(){
         return(
-            <View>
+            <View style={{backgroundColor: 'white', flex: 1}}>
                 <Form 
                     save={(produto) => this.save(produto)}
                 />
