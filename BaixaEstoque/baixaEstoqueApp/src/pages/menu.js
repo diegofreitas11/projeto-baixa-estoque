@@ -2,8 +2,10 @@ import { NavigationContainer, DrawerActions } from '@react-navigation/native';
 import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
-import List from './list';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import ProductPick from './productPick';
 import NewProduct from './newProduct';
+import List from './list';
 import NewTransaction from './newTransaction';
 import MethodPick from './methodPick';
 import { TouchableOpacity, Text } from 'react-native';
@@ -12,6 +14,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
 
 const navOptions = ({navigation}) => ({
     title: '',
@@ -52,7 +55,7 @@ const NewPurchaseStack = () => {
         >
             <Stack.Screen 
                 name="ProductList"
-                component={List}
+                component={ProductPick}
                 
             />
             <Stack.Screen 
@@ -73,7 +76,7 @@ const NewSaleStack = () => {
 
             <Stack.Screen 
                 name="StockList"
-                component={List}
+                component={ProductPick}
                 
             />
             <Stack.Screen 
@@ -89,11 +92,28 @@ const NewSaleStack = () => {
     )
 }
 
+const ListTabs = () => {
+    return(
+        <Tab.Navigator>
+            <Tab.Screen name='Entries' component={List}/>
+            <Tab.Screen name='Outputs' component={List}/>
+        </Tab.Navigator>
+    )
+}
+
 const Menu = () => {
     return(
         <Drawer.Navigator 
-            initialRouteName="NewProduct"
+            initialRouteName="ListTabs"
         >
+            <Drawer.Screen
+                name="ListTabs"
+                component={ListTabs}
+                options={{
+                    drawerLabel: (() => <Text> Tabs </Text>),
+                }}
+            />
+
             <Drawer.Screen 
                 name="NewProductStack" 
                 component={NewProductStack}

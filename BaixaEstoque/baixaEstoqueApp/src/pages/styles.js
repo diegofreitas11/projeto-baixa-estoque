@@ -30,13 +30,15 @@ export default Styles = StyleSheet.create({
         alignSelf: 'center'
     },
     buttonInRow: {
-        borderWidth: 1,
         borderRadius: 5,
+        backgroundColor: '#0B243B',
         padding: 5,
         margin: 20,
         width: 100,
         height: 50,
-        alignItems: 'center'
+        alignItems: 'center',
+        justifyContent: 'center',
+        
     },
     listItem: {
         borderWidth: 0.5,
@@ -61,11 +63,12 @@ export default Styles = StyleSheet.create({
     },
     nextBox: {
         alignItems: 'center',
-        backgroundColor: 'white',
         position: 'absolute',
+        backgroundColor: '#E6E6E6',
         bottom: 0,
         height: 100,
-        width: '100%'     
+        width: '100%',
+        padding: 3,
     },
     successBox: {
         justifyContent: 'center',
@@ -84,5 +87,14 @@ export default Styles = StyleSheet.create({
         alignSelf: 'center',
         fontWeight: 'bold',
         fontSize: 20
+    },
+    entryCard: {
+        flexDirection: 'row',
+        borderBottomWidth: .5,
+        height: 50,
+    },
+    entryData: {
+        marginLeft: '20%',
+        width: 40,
     }
 })

@@ -20,6 +20,8 @@ module.exports = {
         return res.json(produtos);
     },
 
+   
+
     async show(req, res){
         const produto = await Produto.findByPk(req.params.id)
         return res.json(produto);

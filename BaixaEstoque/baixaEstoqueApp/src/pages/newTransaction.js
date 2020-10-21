@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import { View, Text, FlatList, TextInput, TouchableOpacity, Alert } from 'react-native';
 import api from '../services/api';
 import Styles from './styles';
@@ -8,7 +8,7 @@ import SuccessModal from './succesModal';
 
 
 const Form = (props) => {
-    
+
     const calculateValue = (quantity) => {
         var transactions = props.product.transacoes;
         var acc = 0 
@@ -27,7 +27,7 @@ const Form = (props) => {
         }
 
 
-        return acc.toString();
+        return acc.toFixed(2).toString();
     }
 
     const calculateAvg = (quantity) => {
@@ -77,7 +77,7 @@ const Form = (props) => {
                                     if(props.isSale) handleChange('valor')(value);
                                 }else{
                                     handleChange('quantidade')('');
-                                    handleChange('valor')('')
+                                    handleChange('valor')('');
                                     Alert.alert("Não há essa quantidade em estoque");
                                 }
                             }else{
@@ -89,15 +89,15 @@ const Form = (props) => {
                     />
 
                     <Text style={Styles.inputLabel}>Valor {props.isSale ? 'Total': 'Unitário'}</Text>
-                    <TextInput
-                        
+                    <TextInput        
                         value={values.valor}
                         editable={!props.isSale}
                         keyboardType='numeric'
                         onChangeText={handleChange('valor')}
-                        style={Styles.input}
+                        style={props.isSale ? 
+                            {...Styles.input, fontSize: 16, fontWeight: "bold", color: 'black'}
+                            : Styles.input}
                     />
-                    
                     <TouchableOpacity
                         disabled={values.valor === '' || values.quantidade === ''}
                         onPress={handleSubmit}

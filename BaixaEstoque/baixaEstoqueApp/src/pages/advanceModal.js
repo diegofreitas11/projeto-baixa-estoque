@@ -20,14 +20,14 @@ const AdvanceModal = (props) => (
                         style={Styles.buttonInRow}
                         onPress={props.advance()}
                     >
-                        <Text>Avançar</Text>
+                        <Text style={{color: 'white'}}>Avançar</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity 
                         style={Styles.buttonInRow}
                         onPress={props.cancel()}
                     >
-                        <Text>Cancelar</Text>
+                        <Text style={{color: 'white'}}>Cancelar</Text>
                     </TouchableOpacity>
                 </View>
             </View>

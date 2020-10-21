@@ -1,128 +1,62 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, Modal, Alert, TouchableOpacity } from 'react-native';
-//import CheckBox from '@react-native-community/checkbox';
+import { FlatList, View, Text } from 'react-native';
 import api from '../services/api';
 import Styles from './styles';
-import AdvanceModal from './advanceModal';
-
-
-
-class Item extends Component{
-    state = {
-        item: this.props.item
-    }
-
-    render(){        
-        return(
-            <TouchableOpacity 
-                style={this.props.selected ? Styles.selectedListItem : Styles.listItem} 
-                onLongPress={() => this.props.onClick()}
-            >
-                <Text style={{
-                    fontWeight: "bold",
-                    fontSize: 22,
-                    marginLeft: 5
-                }}>{this.state.item.nome}</Text>
-                <Text style={{
-                    color: '#999',
-                    marginLeft: 5
-                }}>{this.state.item.descricao}</Text>
-              
-            </TouchableOpacity>
-        )
-    }
-}
-
 export default class List extends Component{
-
     state = {
-        products: null,
-        isProductSelected: false,
-        selected: null,
-        isStockList: false
+        entries: null
     }
 
     componentDidMount(){
-        ///se for uma venda carregar a lista de compras, se for uma compra, carregar lista...
-        //...carregar lista de produtos.
-        const url = this.props.route.name === 'ProductList' ? 
-        'produtos' : 'produtos_transacoes';
-        this.loadData(url);
+        this.loadData();
     }
 
-    loadData = async (url) => { 
+    loadData = async () => {
         try{
-            var response = await api.get(url);
+            var response = await api.get('/produtos_transacoes');
         }catch(error){
-            console.log(error)
+            console.log(error);
         }
 
-        this.setState({
-            products: response.data,
-            isStockList: url != 'produtos'
-        })
+        var type = this.props.route.name === "Entries" ? 'compra' : 'venda';
 
-        console.log(this.state.isStockList)
+        response.data.forEach((product) => {
+            var filtered = product.transacoes.filter((item) => item.tipo === type);
+            product.transacoes = filtered;
+        })
+        console.log(response.data)
+        this.setState({
+            entries: response.data
+        })
         
-    }
-    
-    ///para deixar o produto selecionado
-    select = (item) => {
-        this.setState({
-            isProductSelected: true, //controla se o modal com a opção de avançar aparece
-            selected: item
-        });
-    }
-
-    advance = () => {
-        this.setState({
-            isProductSelected: false,
-            selected: null
-        })
-
-        var nextPage = this.state.isStockList ? 'MethodPick' : 'NewTransaction';
-
-        this.props.navigation.navigate(nextPage, 
-            {product: this.state.selected, 
-            isSale: this.state.isStockList} )
-    }
-
-    cancel = () => {
-        this.setState({
-            isProductSelected: false,
-            selected: null
-        })
     }
 
     render(){
+        
+       var products = this.state.entries ? this.state.entries.map((item) => (
+            <View>
+                <Text style={Styles.title}>{item.nome}</Text>
+                <View style={Styles.entryCard}>
+                        <Text style={{...Styles.entryData, fontWeight: 'bold'}}>ID</Text>
+                        <Text style={{...Styles.entryData, fontWeight: 'bold'}}>Valor</Text>
+                        <Text style={{...Styles.entryData, fontWeight: 'bold'}}>Quantidade</Text>
+                    </View>
+                {item.transacoes.map((entry) =>(
+                    <View style={Styles.entryCard}>
+                        <Text style={Styles.entryData}>{entry.id}</Text>
+                        <Text style={Styles.entryData}>{entry.valor.toFixed(2)}</Text>
+                        <Text style={Styles.entryData}>{entry.quantidade}</Text>
+                    </View>
+                ))}
+            </View>
+        )) : null
+
 
         return(
-        <View style={{backgroundColor: 'white'}}>
-            <Text style={Styles.title}>Escolha o produto e segure</Text>
-            <FlatList
-                data={this.state.products}
-                renderItem={({item}) => (
-                    <Item
-                        isStockList={this.state.isStockList}
-                        item={item}
-                        selected={this.state.selected && this.state.selected.id == item.id}
-                        onClick={() => this.select(item)}
-                    />
-                )}
-                keyExtractor={item => item.id.toString()}
-            />
-
-            <AdvanceModal
-                visible={this.state.isProductSelected}
-                message={`Realizar transação de ${this.state.selected ? this.state.selected.nome : ''}?`}
-                advance={() => this.advance}
-                cancel={() => this.cancel}
-                
-            />
-        </View>
-
-        
+            <View>
+                {products}
+            </View>
         )
-    }
+       
+        }
 }
-

@@ -32,14 +32,14 @@ export default class MethodPick extends Component{
 
     cancel = () => {
         this.setState({
-            isProductSelected: false,
+            isAMethodSelected: false,
             selected: null
         })
     }
 
     render(){
         return(
-            <View>
+            <View style={{backgroundColor: 'white', flex: 1}}>
                 <FlatList 
                     data={methods}
                     renderItem={({item}) =>(
@@ -59,7 +59,7 @@ export default class MethodPick extends Component{
 
                 <AdvanceModal
                     visible={this.state.isAMethodSelected}
-                    message={`Usar o método ${this.state.selected}`}
+                    message={`Usar o método ${this.state.selected}?`}
                     advance={() => this.advance}
                     cancel={() => this.cancel}
                 />

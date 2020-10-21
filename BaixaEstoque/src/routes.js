@@ -12,6 +12,7 @@ routes.post('/novo_produto', ProdutoController.store);
 routes.put('/produtos/:id', ProdutoController.update);
 routes.delete('/produtos/:id', ProdutoController.destroy);
 
+routes.get('/transacoes', TransacaoController.index)
 routes.post('/nova_transacao', TransacaoController.store);
 
 
