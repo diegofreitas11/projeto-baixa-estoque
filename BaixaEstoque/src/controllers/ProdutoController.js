@@ -8,7 +8,7 @@ module.exports = {
         return res.json(produtos);    
     },
 
-    async indexWithTran(req, res){ //traz os produtos com as transações
+    async indexWithTransactions(req, res){ //traz os produtos com as transações
         const produtos = await Produto.findAll({
             include: {
                 model: Transacao,
@@ -20,14 +20,27 @@ module.exports = {
         return res.json(produtos);
     },
 
-   
+    async indexWithTransactionsByType(req, res){
+        const produtos = await Produto.findAll({
+            include:{
+                model: Transacao,
+                as: 'transacoes',
+                where: {
+                    tipo: req.params.tipo
+                },
+                required: true
+            }
+        })
+
+        return res.json(produtos);
+    },
 
     async show(req, res){
         const produto = await Produto.findByPk(req.params.id)
         return res.json(produto);
     },
 
-    async showWithTran(req, res){
+    async showWithTransactions(req, res){
         const produto = await Produto.findByPk(req.params.id,{
             include: {
                 model: Transacao,

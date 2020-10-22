@@ -9,7 +9,8 @@ import List from './list';
 import NewTransaction from './newTransaction';
 import MethodPick from './methodPick';
 import { TouchableOpacity, Text } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Fontisto from 'react-native-vector-icons/Fontisto';
 
 
 const Drawer = createDrawerNavigator();
@@ -24,7 +25,7 @@ const navOptions = ({navigation}) => ({
             onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
             style={{padding: 5}}
         >
-            <Icon name='bars' size={30} color='#000'/>
+            <FontAwesome name='bars' size={30} color='#000'/>
         </TouchableOpacity>
     )
 })
@@ -94,9 +95,19 @@ const NewSaleStack = () => {
 
 const ListTabs = () => {
     return(
-        <Tab.Navigator>
-            <Tab.Screen name='Entries' component={List}/>
-            <Tab.Screen name='Outputs' component={List}/>
+        <Tab.Navigator
+            screenOptions={() => ({
+                tabBarIcon: ({ color, size }) => {
+                    return <Fontisto name={'table-2'} size={size} color={color}/>
+                },
+            })}
+            tabBarOptions={{
+                activeTintColor: 'green',
+                inactiveTintColor: 'black'
+            }}
+        >
+            <Tab.Screen name='Entradas' component={List}/>
+            <Tab.Screen name='Saídas' component={List}/>
         </Tab.Navigator>
     )
 }

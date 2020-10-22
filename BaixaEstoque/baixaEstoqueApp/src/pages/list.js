@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, View, Text } from 'react-native';
+import { FlatList, View, Text, ScrollView } from 'react-native';
 import api from '../services/api';
 import Styles from './styles';
 export default class List extends Component{
@@ -12,18 +12,13 @@ export default class List extends Component{
     }
 
     loadData = async () => {
+        var type = this.props.route.name === "Entradas" ? 'compra' : 'venda';
         try{
-            var response = await api.get('/produtos_transacoes');
+            var response = await api.get(`/produtos_transacoes/${type}`);
         }catch(error){
             console.log(error);
         }
 
-        var type = this.props.route.name === "Entries" ? 'compra' : 'venda';
-
-        response.data.forEach((product) => {
-            var filtered = product.transacoes.filter((item) => item.tipo === type);
-            product.transacoes = filtered;
-        })
         console.log(response.data)
         this.setState({
             entries: response.data
@@ -53,9 +48,9 @@ export default class List extends Component{
 
 
         return(
-            <View>
+            <ScrollView style={{padding: 10}}>
                 {products}
-            </View>
+            </ScrollView>
         )
        
         }
