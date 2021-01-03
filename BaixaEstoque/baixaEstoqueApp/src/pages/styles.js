@@ -27,6 +27,7 @@ export default Styles = StyleSheet.create({
         width: 200,
         height: 50,
         alignItems: 'center',
+        justifyContent: 'center',
         alignSelf: 'center'
     },
     buttonInRow: {
@@ -48,7 +49,7 @@ export default Styles = StyleSheet.create({
         margin: 5,
         shadowColor: '#cecece',
         elevation: 5,
-        padding: 5
+        padding: 10
     },
     selectedListItem:{
         borderWidth: 0.5,
@@ -92,9 +93,9 @@ export default Styles = StyleSheet.create({
         flexDirection: 'row',
         borderBottomWidth: .5,
         height: 50,
+        width: '100%'
     },
     entryData: {
-        marginLeft: '20%',
-        width: 40,
+        width: '33%',
     }
 })

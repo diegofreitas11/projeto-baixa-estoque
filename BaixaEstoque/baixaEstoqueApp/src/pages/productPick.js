@@ -12,7 +12,7 @@ class Item extends Component{
         item: this.props.item
     }
 
-    render(){        
+    render(){
         return(
             <TouchableOpacity 
                 style={this.props.selected ? Styles.selectedListItem : Styles.listItem} 
@@ -62,7 +62,6 @@ export default class ProductPick extends Component{
             isStockList: url != 'produtos'
         })
 
-        console.log(this.state.isStockList)
         
     }
     

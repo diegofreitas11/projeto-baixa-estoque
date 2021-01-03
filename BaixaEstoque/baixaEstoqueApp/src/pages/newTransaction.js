@@ -14,7 +14,6 @@ const Form = (props) => {
         var acc = 0 
         var i = props.method === 'PEPS' ? 0 : transactions.length - 1;
         var increment = props.method === 'PEPS' ? 1 : -1;
-        console.log(i);
         while(quantity>0){
             if(quantity > transactions[i].quantidade){
                 acc += transactions[i].valor * transactions[i].quantidade;
@@ -160,7 +159,6 @@ class NewTransaction extends Component{
         })
 
         product.transacoes = product.transacoes.filter((item) => item.tipo === "compra");
-        console.log(this.state.method);
 
         return product;
         
@@ -172,7 +170,6 @@ class NewTransaction extends Component{
         const transaction = {'produto_id': this.state.product.id, 
         'tipo': isSale ? 'venda':'compra', 'metodo': this.state.method,...values}
 
-        console.log(transaction.valor);
         try{
             await api.post('nova_transacao', transaction)
         }catch(error){

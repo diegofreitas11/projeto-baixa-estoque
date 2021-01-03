@@ -19,27 +19,29 @@ export default class List extends Component{
             console.log(error);
         }
 
-        console.log(response.data)
-        this.setState({
-            entries: response.data
-        })
-        
-    }
-
+        if(response){
+            this.setState({
+                entries: response.data
+            })
+        }
+    } 
     render(){
         
        var products = this.state.entries ? this.state.entries.map((item) => (
             <View>
-                <Text style={Styles.title}>{item.nome}</Text>
+                <Text style={{...Styles.title, marginTop: 20}}>{item.nome}</Text>
                 <View style={Styles.entryCard}>
                         <Text style={{...Styles.entryData, fontWeight: 'bold'}}>ID</Text>
                         <Text style={{...Styles.entryData, fontWeight: 'bold'}}>Valor</Text>
                         <Text style={{...Styles.entryData, fontWeight: 'bold'}}>Quantidade</Text>
                     </View>
                 {item.transacoes.map((entry) =>(
-                    <View style={Styles.entryCard}>
+                    <View 
+                        style={Styles.entryCard}
+                        key={entry.id}
+                    >
                         <Text style={Styles.entryData}>{entry.id}</Text>
-                        <Text style={Styles.entryData}>{entry.valor.toFixed(2)}</Text>
+                        <Text style={Styles.entryData}>R$ {entry.valor.toFixed(2)}</Text>
                         <Text style={Styles.entryData}>{entry.quantidade}</Text>
                     </View>
                 ))}

@@ -121,7 +121,7 @@ const Menu = () => {
                 name="ListTabs"
                 component={ListTabs}
                 options={{
-                    drawerLabel: (() => <Text> Tabs </Text>),
+                    drawerLabel: (() => <Text> Entradas e Saídas </Text>),
                 }}
             />
 
